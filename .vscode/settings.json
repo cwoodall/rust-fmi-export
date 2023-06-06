@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "fmi2functions.h": "c"
+    }
+}

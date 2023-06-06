@@ -1,0 +1,14 @@
+[package]
+name = "sine-fmi-sys"
+version = "0.1.0"
+edition = "2021"
+
+# https://doc.rust-lang.org/reference/linkage.html
+#https://www.reddit.com/r/rust/comments/abefuy/how_to_create_a_dynamic_rust_library_and_link_to/
+[lib]
+crate-type=["cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fmi2-sys = { path = "../fmi2-sys" }

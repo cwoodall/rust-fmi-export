@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<fmiModelDescription
+  fmiVersion               = "2.0"
+  modelName                = "Rectifier"
+  guid                     = "{3b19c65e-77df-e618-7830-cea1a931191a}"
+  description              = "Model Rectifier"
+  author                   = ""
+  version                  = ""
+  copyright                = ""
+  license                  = ""
+  generationTool           = "MapleSim (1362139/1362139/1362139)"
+  generationDateAndTime    = "2018-11-13T11:37:03Z"
+  variableNamingConvention = "structured"
+  numberOfEventIndicators  = "6">
+
+  <CoSimulation
+    modelIdentifier                        = "Rectifier"
+    canHandleVariableCommunicationStepSize = "true"
+    canGetAndSetFMUstate                   = "true"
+    canSerializeFMUstate                   = "true"
+    providesDirectionalDerivative          = "false"
+    canInterpolateInputs                   = "false">
+    <SourceFiles>
+        <File name = "Rectifier.c"/>
+    </SourceFiles>
+  </CoSimulation>
+
+  <UnitDefinitions>
+    <Unit name =  "V" />
+    <Unit name =  "s" />
+  </UnitDefinitions>
+
+  <DefaultExperiment
+    startTime = "0.00000000000000000e+00"
+    stopTime  = "1.00000000000000000e-01"
+    stepSize  = "1.00000000000000000e-07"/>
+
+  <ModelVariables>
+    <ScalarVariable
+      name           = "internalTime"
+      valueReference = "0"
+      description    = "internal time"
+      causality      = "independent" >
+      <Real 
+        unit     = "s"/>
+    </ScalarVariable>   <!--index="1" -->
+    <ScalarVariable
+      name           = "outputs"
+      valueReference = "1"
+      description    = "Rectifier1.Capacitor1.v"
+      initial        = "exact"
+      causality      = "output" >
+      <Real 
+        unit     = "V"
+        start    = "2.82842712474619020e+02"/>
+    </ScalarVariable>   <!--index="2" -->
+    <ScalarVariable
+      name           = "Rectifier1.Capacitor2.v"
+      valueReference = "2"
+      description    = "Rectifier1.Capacitor2.v"
+      initial        = "exact" >
+      <Real 
+        start    = "2.82842712474619020e+02"/>
+    </ScalarVariable>   <!--index="3" -->
+    <ScalarVariable
+      name           = "Rectifier1.iAC[2]"
+      valueReference = "3"
+      description    = "Rectifier1.iAC[2]"
+      initial        = "exact" >
+      <Real 
+        start    = "0.00000000000000000e+00"/>
+    </ScalarVariable>   <!--index="4" -->
+    <ScalarVariable
+      name           = "Rectifier1.iAC[3]"
+      valueReference = "4"
+      description    = "Rectifier1.iAC[3]"
+      initial        = "exact" >
+      <Real 
+        start    = "0.00000000000000000e+00"/>
+    </ScalarVariable>   <!--index="5" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode1.s"
+      valueReference = "5"
+      description    = "Rectifier1.IdealDiode1.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="6" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode2.s"
+      valueReference = "6"
+      description    = "Rectifier1.IdealDiode2.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="7" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode3.s"
+      valueReference = "7"
+      description    = "Rectifier1.IdealDiode3.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="8" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode4.s"
+      valueReference = "8"
+      description    = "Rectifier1.IdealDiode4.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="9" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode5.s"
+      valueReference = "9"
+      description    = "Rectifier1.IdealDiode5.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="10" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode6.s"
+      valueReference = "10"
+      description    = "Rectifier1.IdealDiode6.s"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="11" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode4.p.i"
+      valueReference = "11"
+      description    = "Rectifier1.IdealDiode4.p.i"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="12" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode5.p.i"
+      valueReference = "12"
+      description    = "Rectifier1.IdealDiode5.p.i"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="13" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode6.p.i"
+      valueReference = "13"
+      description    = "Rectifier1.IdealDiode6.p.i"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="14" -->
+    <ScalarVariable
+      name           = "Rectifier1.Inductor2.v"
+      valueReference = "14"
+      description    = "Rectifier1.Inductor2.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="15" -->
+    <ScalarVariable
+      name           = "Rectifier1.Inductor3.v"
+      valueReference = "15"
+      description    = "Rectifier1.Inductor3.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="16" -->
+    <ScalarVariable
+      name           = "Rectifier1.SineVoltage1.p.v"
+      valueReference = "16"
+      description    = "Rectifier1.SineVoltage1.p.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="17" -->
+    <ScalarVariable
+      name           = "Rectifier1.SineVoltage2.p.v"
+      valueReference = "17"
+      description    = "Rectifier1.SineVoltage2.p.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="18" -->
+    <ScalarVariable
+      name           = "Rectifier1.SineVoltage3.n.v"
+      valueReference = "18"
+      description    = "Rectifier1.SineVoltage3.n.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="19" -->
+    <ScalarVariable
+      name           = "Rectifier1.SineVoltage3.p.v"
+      valueReference = "19"
+      description    = "Rectifier1.SineVoltage3.p.v"
+      initial        = "calculated" >
+      <Real />
+    </ScalarVariable>   <!--index="20" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode1.off"
+      valueReference = "20"
+      description    = "Rectifier1.IdealDiode1.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="21" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode2.off"
+      valueReference = "21"
+      description    = "Rectifier1.IdealDiode2.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="22" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode3.off"
+      valueReference = "22"
+      description    = "Rectifier1.IdealDiode3.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="23" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode4.off"
+      valueReference = "23"
+      description    = "Rectifier1.IdealDiode4.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="24" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode5.off"
+      valueReference = "24"
+      description    = "Rectifier1.IdealDiode5.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="25" -->
+    <ScalarVariable
+      name           = "Rectifier1.IdealDiode6.off"
+      valueReference = "25"
+      description    = "Rectifier1.IdealDiode6.off"
+      variability    = "discrete" >
+      <Real />
+    </ScalarVariable>   <!--index="26" -->
+    <ScalarVariable
+      name           = "der(outputs)"
+      valueReference = "26"
+      description    = "der(Rectifier1.Capacitor1.v)" >
+      <Real 
+        derivative = "2"/>
+    </ScalarVariable>   <!--index="27" -->
+    <ScalarVariable
+      name           = "Rectifier1.Capacitor2.v.der"
+      valueReference = "27"
+      description    = "der(Rectifier1.Capacitor2.v)" >
+      <Real 
+        derivative = "3"/>
+    </ScalarVariable>   <!--index="28" -->
+    <ScalarVariable
+      name           = "Rectifier1.iAC[2].der"
+      valueReference = "28"
+      description    = "der(Rectifier1.iAC[2])" >
+      <Real 
+        derivative = "4"/>
+    </ScalarVariable>   <!--index="29" -->
+    <ScalarVariable
+      name           = "Rectifier1.iAC[3].der"
+      valueReference = "29"
+      description    = "der(Rectifier1.iAC[3])" >
+      <Real 
+        derivative = "5"/>
+    </ScalarVariable>   <!--index="30" -->
+    <ScalarVariable
+      name           = "Rectifier_r_30"
+      valueReference = "30"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="31" -->
+    <ScalarVariable
+      name           = "Rectifier_r_31"
+      valueReference = "31"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="32" -->
+    <ScalarVariable
+      name           = "Rectifier_r_32"
+      valueReference = "32"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="33" -->
+    <ScalarVariable
+      name           = "Rectifier_r_33"
+      valueReference = "33"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="34" -->
+    <ScalarVariable
+      name           = "Rectifier_r_34"
+      valueReference = "34"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="35" -->
+    <ScalarVariable
+      name           = "Rectifier_r_35"
+      valueReference = "35"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="36" -->
+    <ScalarVariable
+      name           = "Rectifier_r_36"
+      valueReference = "36"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="37" -->
+    <ScalarVariable
+      name           = "Rectifier_r_37"
+      valueReference = "37"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="38" -->
+    <ScalarVariable
+      name           = "Rectifier_r_38"
+      valueReference = "38"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="39" -->
+    <ScalarVariable
+      name           = "Rectifier_r_39"
+      valueReference = "39"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="40" -->
+    <ScalarVariable
+      name           = "Rectifier_r_40"
+      valueReference = "40"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="41" -->
+    <ScalarVariable
+      name           = "Rectifier_r_41"
+      valueReference = "41"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="42" -->
+    <ScalarVariable
+      name           = "Rectifier_r_42"
+      valueReference = "42"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="43" -->
+    <ScalarVariable
+      name           = "Rectifier_r_43"
+      valueReference = "43"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="44" -->
+    <ScalarVariable
+      name           = "Rectifier_r_44"
+      valueReference = "44"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="45" -->
+    <ScalarVariable
+      name           = "Rectifier_r_45"
+      valueReference = "45"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="46" -->
+    <ScalarVariable
+      name           = "Rectifier_r_46"
+      valueReference = "46"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="47" -->
+    <ScalarVariable
+      name           = "Rectifier_r_47"
+      valueReference = "47"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="48" -->
+    <ScalarVariable
+      name           = "Rectifier_r_48"
+      valueReference = "48"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="49" -->
+    <ScalarVariable
+      name           = "Rectifier_r_49"
+      valueReference = "49"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="50" -->
+    <ScalarVariable
+      name           = "Rectifier_r_50"
+      valueReference = "50"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="51" -->
+    <ScalarVariable
+      name           = "Rectifier_r_51"
+      valueReference = "51"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="52" -->
+    <ScalarVariable
+      name           = "Rectifier_r_52"
+      valueReference = "52"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="53" -->
+    <ScalarVariable
+      name           = "Rectifier_r_53"
+      valueReference = "53"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="54" -->
+    <ScalarVariable
+      name           = "Rectifier_r_54"
+      valueReference = "54"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="55" -->
+    <ScalarVariable
+      name           = "Rectifier_r_55"
+      valueReference = "55"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="56" -->
+    <ScalarVariable
+      name           = "Rectifier_r_56"
+      valueReference = "56"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="57" -->
+    <ScalarVariable
+      name           = "Rectifier_r_57"
+      valueReference = "57"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="58" -->
+    <ScalarVariable
+      name           = "Rectifier_r_58"
+      valueReference = "58"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="59" -->
+    <ScalarVariable
+      name           = "Rectifier_r_59"
+      valueReference = "59"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="60" -->
+    <ScalarVariable
+      name           = "Rectifier_r_60"
+      valueReference = "60"
+      description    = "internal variable" >
+      <Real />
+    </ScalarVariable>   <!--index="61" -->
+    <ScalarVariable
+      name           = "minsamplestep"
+      valueReference = "61"
+      description    = "Minimum time step between samples in binary data file"
+      causality      = "parameter"
+      variability    = "fixed" >
+      <Real 
+        unit     = "s"
+        start    = "2.50000000000000000e-02"/>
+    </ScalarVariable>   <!--index="62" -->
+    <ScalarVariable
+      name           = "binfilename"
+      valueReference = "62"
+      description    = "Name of binary data file"
+      causality      = "parameter"
+      variability    = "fixed" >
+      <String 
+        start    = "DISABLED"/>
+    </ScalarVariable>   <!--index="63" -->
+  </ModelVariables>
+
+  <ModelStructure>
+    <Outputs>
+      <Unknown index = "2" dependencies = "" />
+    </Outputs>
+    <Derivatives>
+      <Unknown index = "27" dependencies = "1 2 3 4 5" />
+      <Unknown index = "28" dependencies = "1 2 3 4 5" />
+      <Unknown index = "29" dependencies = "1 2 3 4 5" />
+      <Unknown index = "30" dependencies = "1 2 3 4 5" />
+    </Derivatives>
+    <InitialUnknowns>
+      <Unknown index = "27" dependencies = "1 2 3 4 5" />
+      <Unknown index = "28" dependencies = "1 2 3 4 5" />
+      <Unknown index = "29" dependencies = "1 2 3 4 5" />
+      <Unknown index = "30" dependencies = "1 2 3 4 5" />
+    </InitialUnknowns>
+  </ModelStructure>
+
+</fmiModelDescription>
