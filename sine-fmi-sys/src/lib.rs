@@ -59,6 +59,11 @@ pub extern "C" fn fmi2SetDebugLogging(
     nCategories: usize,
     categories: *const fmi2String,
 ) -> fmi2Status {
+    assert!(
+        std::ptr::null() != c as *mut c_void,
+        "fmi2FreeInstance: Null pointer passed"
+    );
+    
     let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
@@ -121,19 +126,21 @@ pub extern "C" fn fmi2Instantiate(
         initializeMode: FMI2FALSE,
     });
 
-    // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
-    // Create a c-string from a rust string and report it
-    let category = CString::new("log").unwrap();
-    let message = CString::new("fmi2Instantiate: instanceName = %s").unwrap();
-    unsafe {
-        x.functions.logger.unwrap()(
-            x.as_mut() as *mut ModelInstance as *mut c_void,
-            instanceName,
-            fmi2Status_fmi2OK,
-            category.into_raw(),
-            message.into_raw(),
-            instanceName,
-        );
+    if x.loggingOn == FMI2TRUE {
+        // // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
+        // // Create a c-string from a rust string and report it
+        let category = CString::new("log").unwrap();
+        let message = CString::new("fmi2Instantiate: instanceName = %s").unwrap();
+        unsafe {
+            x.functions.logger.unwrap()(
+                x.as_mut() as *mut ModelInstance as *mut c_void,
+                instanceName,
+                fmi2Status_fmi2OK,
+                category.into_raw(),
+                message.into_raw(),
+                instanceName,
+            );
+        }
     }
 
     Box::into_raw(x) as *mut c_void
@@ -142,25 +149,39 @@ pub extern "C" fn fmi2Instantiate(
 // void fmi2FreeInstance(fmi2Component c) {
 #[no_mangle]
 pub extern "C" fn fmi2FreeInstance(c: fmi2Component) -> () {
-    let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
+    assert!(
+        std::ptr::null() != c as *mut c_void,
+        "fmi2FreeInstance: Null pointer passed"
+    );
+    
+    let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
     // Create a c-string from a rust string and report it
-    let category = CString::new("log").unwrap();
-    let message = CString::new("fmi2FreeInstance: instanceName = %s").unwrap();
-    unsafe {
-        x.functions.logger.unwrap()(
-            x.as_mut() as *mut ModelInstance as *mut c_void,
-            x.instanceName,
-            fmi2Status_fmi2OK,
-            category.into_raw(),
-            message.into_raw(),
-            x.instanceName,
-        );
+    if x.loggingOn == FMI2TRUE {
+        let category = CString::new("log").unwrap();
+        let message = CString::new("fmi2FreeInstance: instanceName = %s").unwrap();
+        unsafe {
+            x.functions.logger.unwrap()(
+                c,
+                x.instanceName,
+                fmi2Status_fmi2OK,
+                category.into_raw(),
+                message.into_raw(),
+                x.instanceName,
+            );
+        }
     }
 
-    unsafe {
-        x.functions.freeMemory.unwrap()(c);
+    match x.functions.freeMemory {
+        None => {
+            ();
+        },
+        Some(f) => {
+            unsafe {
+                f(c);
+            }
+        }
     }
 }
 
@@ -173,7 +194,12 @@ pub extern "C" fn fmi2SetupExperiment(
     stopTimeDefined: fmi2Boolean,
     stopTime: fmi2Real,
 ) -> fmi2Status {
-    let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
+    assert!(
+        std::ptr::null() != c as *mut c_void,
+        "fmi2FreeInstance: Null pointer passed"
+    );
+    
+    let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     x.startTime = startTime;
     x.stopTime = if stopTimeDefined == FMI2TRUE {
@@ -202,42 +228,44 @@ pub extern "C" fn fmi2EnterInitializationMode(c: fmi2Component) -> fmi2Status {
     } else {
         fmi2Status_fmi2Error
     }
-
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2ExitInitializationMode(c: fmi2Component) -> fmi2Status {
     // Validate that c is not a nullptr
-    if c != 0 as *mut c_void {
-        let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
+    // if c != 0 as *mut c_void {
+    //     let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
 
-            x.initializeMode = FMI2FALSE;
-            x.jsynced = FMI2FALSE;
-            fmi2Status_fmi2OK
-    
-    } else {
-        fmi2Status_fmi2Error
-    }
+    //         x.initializeMode = FMI2FALSE;
+    //         x.jsynced = FMI2FALSE;
+    //         fmi2Status_fmi2OK
+
+    // } else {
+    //     fmi2Status_fmi2Error
+    // }
+    fmi2Status_fmi2OK
 }
+
 #[no_mangle]
 pub extern "C" fn fmi2Terminate(c: fmi2Component) -> fmi2Status {
-    let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
-    x.state = ModelState::Terminated;
+    // let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
+    // x.state = ModelState::Terminated;
     fmi2Status_fmi2OK
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2Reset(c: fmi2Component) -> fmi2Status {
-    if c != 0 as *mut c_void {
-        let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
+    // if c != 0 as *mut c_void {
+    //     let mut x: Box<ModelInstance> = unsafe { Box::from_raw(c as *mut ModelInstance) };
 
-        x.state = ModelState::Instantiated;
-        x.jsynced = FMI2FALSE;
-        x.synced = FMI2FALSE;
-        fmi2Status_fmi2OK
-    } else {
-        fmi2Status_fmi2Error
-    }
+    //     x.state = ModelState::Instantiated;
+    //     x.jsynced = FMI2FALSE;
+    //     x.synced = FMI2FALSE;
+    //     fmi2Status_fmi2OK
+    // } else {
+    //     fmi2Status_fmi2Error
+    // }
+    fmi2Status_fmi2OK
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetReal(
@@ -246,7 +274,7 @@ pub extern "C" fn fmi2GetReal(
     nvr: usize,
     value: *mut fmi2Real,
 ) -> fmi2Status {
-    fmi2Status_fmi2Error
+    fmi2Status_fmi2OK
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetInteger(
@@ -320,10 +348,7 @@ pub extern "C" fn fmi2SetFMUstate(c: fmi2Component, FMUstate: fmi2FMUstate) -> f
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2FreeFMUstate(
-    c: fmi2Component,
-    FMUstate: *mut fmi2FMUstate,
-) -> fmi2Status {
+pub extern "C" fn fmi2FreeFMUstate(c: fmi2Component, FMUstate: *mut fmi2FMUstate) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
@@ -459,7 +484,7 @@ pub extern "C" fn fmi2DoStep(
     communicationStepSize: fmi2Real,
     noSetFMUStatePriorToCurrentPoint: fmi2Boolean,
 ) -> fmi2Status {
-    fmi2Status_fmi2Error
+    fmi2Status_fmi2OK
 }
 #[no_mangle]
 pub extern "C" fn fmi2CancelStep(c: fmi2Component) -> fmi2Status {

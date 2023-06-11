@@ -9,7 +9,7 @@
 #include "fmi2Functions.h"
 
 #define compEnv comp->functions.componentEnvironment
-#define compLog comp->functions.logger
+#define compLog comp->functions.fmi2SetDebugLogging
 
 #define not_modelError (modelInstantiated | modelInitialized | modelTerminated)
 /* According to the chart on pg. 85 of the spec, 'Get's are not allowed

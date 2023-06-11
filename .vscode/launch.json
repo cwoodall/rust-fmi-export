@@ -1,0 +1,15 @@
+{
+    "configurations": [
+    {
+        "name": "(lldb) Launch",
+        "type": "lldb",
+        "request": "launch",
+        "program": "${workspaceRoot}/.venv/bin/python",
+        "args": ["-m", "fmpy", "simulate", "${workspaceRoot}/Rectifier.out.fmu"],
+        "cwd": "${fileDirname}",
+        "terminal": "integrated",
+        "preLaunchTask": "Make: build",
+        "sourceLanguages": ["rust", "cpp"]
+    }
+]
+}
