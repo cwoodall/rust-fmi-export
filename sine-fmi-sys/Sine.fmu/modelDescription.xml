@@ -2,14 +2,14 @@
 
 <fmiModelDescription
   fmiVersion               = "2.0"
-  modelName                = "Rectifier"
+  modelName                = "Sine"
   guid                     = "{3b19c65e-77df-e618-7830-cea1a931191a}"
   description              = "Model Sine Wave"
   variableNamingConvention = "structured"
   numberOfEventIndicators  = "0">
 
   <CoSimulation
-    modelIdentifier                        = "Rectifier"
+    modelIdentifier                        = "Sine"
     canHandleVariableCommunicationStepSize = "false"
     canGetAndSetFMUstate                   = "true"
     canSerializeFMUstate                   = "false"
@@ -40,7 +40,7 @@
     <ScalarVariable
       name           = "output"
       valueReference = "1"
-      description    = "SineWave1.out"
+      description    = "Sine1.out"
       initial        = "exact"
       causality      = "output" >
       <Real 
@@ -50,7 +50,7 @@
     <ScalarVariable
       name           = "frequency"
       valueReference = "2"
-      description    = "SineWave1.frequency"
+      description    = "Sine1.frequency"
       initial        = "exact"
         variability = "fixed"
 
@@ -62,7 +62,7 @@
     <ScalarVariable
       name           = "gain"
       valueReference = "3"
-      description    = "SineWave1.gain"
+      description    = "Sine1.gain"
       causality      = "input" >
       <Real 
         unit     = "V"
