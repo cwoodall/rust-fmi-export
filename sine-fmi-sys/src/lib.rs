@@ -1,10 +1,29 @@
 use fmi2_sys::*;
+use std::any::TypeId;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_void};
 
 extern crate num;
+
 #[macro_use]
 extern crate num_derive;
+
+#[macro_use]
+extern crate fmi2_derive;
+
+use fmi2_derive::*;
+#[derive(Debug)]
+pub enum FMIErrors { InvalidValueReference, Error }
+
+pub trait FmiModelStructDerive {
+    fn get_real_by_value_reference(self: &Self, value_reference: u64) -> Option<f64>;
+    fn get_bool_by_value_reference(self: &Self, value_reference: u64) -> Option<bool>;
+    fn get_integer_by_value_reference(self: &Self, value_reference: u64) -> Option<i64>;
+    fn set_real_by_value_reference(self: &mut Self, value_reference: u64, value: f64) -> Result<(),FMIErrors> ;
+    fn set_integer_by_value_reference(self: &mut Self, value_reference: u64, value: i64) -> Result<(),FMIErrors> ;
+    fn set_bool_by_value_reference(self: &mut Self, value_reference: u64, value: bool) -> Result<(),FMIErrors> ;
+    fn to_model_description_xml() -> String;
+}
 
 pub const VERSION: &str = "2.0";
 pub const GUID: &str = "{21d9f232-b090-4c79-933f-33da939b5934}";
@@ -12,8 +31,20 @@ pub const GUID: &str = "{21d9f232-b090-4c79-933f-33da939b5934}";
 const FMI2TRUE: fmi2Boolean = fmi2True as fmi2Boolean;
 const FMI2FALSE: fmi2Boolean = fmi2False as fmi2Boolean;
 
-pub mod test {
-    pub const VERSION: &str = "1.0";
+#[repr(C)]
+#[derive(FmiModelStructDerive)]
+pub struct Foo {
+    #[fmi_variable(id = 0, causality = "output", description = "bar", unit = "s")]
+    bar: f64,
+
+    #[fmi_variable(causality = "output", description = "bar", unit = "s")]
+    wow: bool,
+
+    #[fmi_variable(causality = "parameter", description = "bar", unit = "V")]
+    lol: i64,
+
+    // Unmarked variables will be ignored
+    hello: f64,
 }
 
 #[repr(C)]
@@ -26,13 +57,12 @@ pub enum ModelState {
 }
 
 #[repr(C)]
-#[derive(Debug)]
-#[derive(FromPrimitive)]
+#[derive(Debug, FromPrimitive)]
 enum ValueReferences {
     TimeElapsed = 0,
     Output = 1,
     Frequency = 2,
-    Gain = 3
+    Gain = 3,
 }
 
 #[repr(C)]
@@ -90,7 +120,6 @@ pub extern "C" fn fmi2SetDebugLogging(
         "fmi2FreeInstance: Null pointer passed"
     );
 
-    
     let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
@@ -149,7 +178,10 @@ pub extern "C" fn fmi2Instantiate(
     let guid = unsafe { CStr::from_ptr(fmuGUID as *mut c_char) };
 
     println!("fmi2Instantiate: GUID = {}", guid.to_str().unwrap());
-    assert!(guid.to_str().unwrap() == GUID, "fmi2Instantiate: Invalid GUID");
+    assert!(
+        guid.to_str().unwrap() == GUID,
+        "fmi2Instantiate: Invalid GUID"
+    );
 
     let mut x: Box<ModelInstance> = Box::new(ModelInstance {
         instanceName: instanceName,
@@ -170,7 +202,7 @@ pub extern "C" fn fmi2Instantiate(
         output: 0.0,
         time_elapsed: 0.0,
         frequency: 100.0,
-        gain: 1.0
+        gain: 1.0,
     });
 
     if x.loggingOn == FMI2TRUE {
@@ -341,26 +373,27 @@ pub extern "C" fn fmi2GetReal(
     println!("{:?}", x);
     println!("{:?}, {:?}, {:?}", vr, nvr, value);
 
-
     if nvr > 0 {
         let value_slice: &mut [f64] = unsafe { std::slice::from_raw_parts_mut(value, nvr) };
         let reference_slice: &[fmi2ValueReference] = unsafe { std::slice::from_raw_parts(vr, nvr) };
-    
 
         for i in 0..nvr {
             let value_reference = num::FromPrimitive::from_u32(reference_slice[i]);
             match value_reference {
                 Some(ValueReferences::TimeElapsed) => {
                     value_slice[i] = x.time_elapsed;
-                },
+                }
                 Some(ValueReferences::Output) => {
                     value_slice[i] = x.output;
-                },
+                }
                 Some(ValueReferences::Frequency) => {
                     value_slice[i] = x.frequency;
-                },
+                }
                 _ => {
-                    println!("fmi2GetReal: Unknown value reference: {}", reference_slice[i]);
+                    println!(
+                        "fmi2GetReal: Unknown value reference: {}",
+                        reference_slice[i]
+                    );
                     return fmi2Status_fmi2Error;
                 }
             }
@@ -427,23 +460,24 @@ pub extern "C" fn fmi2SetReal(
     println!("{:?}", x);
     println!("{:?}, {:?}, {:?}", vr, nvr, value);
 
-
     if nvr > 0 {
         let value_slice: &[f64] = unsafe { std::slice::from_raw_parts(value, nvr) };
         let reference_slice: &[fmi2ValueReference] = unsafe { std::slice::from_raw_parts(vr, nvr) };
-    
 
         for i in 0..nvr {
             let value_reference = num::FromPrimitive::from_u32(reference_slice[i]);
             match value_reference {
                 Some(ValueReferences::Frequency) => {
                     x.frequency = value_slice[i];
-                },
+                }
                 Some(ValueReferences::Gain) => {
                     x.gain = value_slice[i];
-                },
+                }
                 _ => {
-                    println!("fmi2GetReal: Unknown value reference: {}", reference_slice[i]);
+                    println!(
+                        "fmi2GetReal: Unknown value reference: {}",
+                        reference_slice[i]
+                    );
                     return fmi2Status_fmi2Error;
                 }
             }
@@ -631,11 +665,10 @@ pub extern "C" fn fmi2DoStep(
         "fmi2GetReal: Null pointer passed"
     );
 
-
     let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     x.time_elapsed = x.time_elapsed + communicationStepSize;
-    x.output = x.gain*(x.time_elapsed * x.frequency).sin();
+    x.output = x.gain * (x.time_elapsed * x.frequency).sin();
 
     fmi2Status_fmi2OK
 }
@@ -690,3 +723,12 @@ pub extern "C" fn fmi2GetStringStatus(
     fmi2Status_fmi2Error
 }
 
+#[cfg(test)]
+mod sine_fmi_tests {
+    use super::*;
+    #[test]
+    fn print_xml() {
+        println!("{}", Foo::to_model_description_xml());
+        panic!("")
+    }
+}
