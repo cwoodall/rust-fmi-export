@@ -1,5 +1,5 @@
 use fmi2_sys::*;
-use std::ffi::{CStr, CString};
+use std::ffi::{CString};
 use std::os::raw::{c_char, c_void};
 
 extern crate num;
@@ -78,8 +78,8 @@ pub extern "C" fn fmi2GetTypesPlatform() -> *const c_char {
 pub extern "C" fn fmi2SetDebugLogging(
     c: *mut c_void,
     loggingOn: fmi2Boolean,
-    nCategories: usize,
-    categories: *const fmi2String,
+    _nCategories: usize,
+    _categories: *const fmi2String,
 ) -> fmi2Status {
     assert!(
         std::ptr::null() != c as *mut c_void,
@@ -126,9 +126,9 @@ pub extern "C" fn fmi2Instantiate(
     instanceName: fmi2String,
     fmuType: fmi2Type,
     fmuGUID: fmi2String,
-    fmuResourceLocation: fmi2String,
+    _fmuResourceLocation: fmi2String,
     functions: fmi2CallbackFunctions,
-    visible: fmi2Boolean,
+    _visible: fmi2Boolean,
     loggingOn: fmi2Boolean,
 ) -> *mut ModelInstance {
     let mut x: Box<ModelInstance> = Box::new(ModelInstance {
@@ -214,8 +214,8 @@ pub extern "C" fn fmi2FreeInstance(c: fmi2Component) -> () {
 #[no_mangle]
 pub extern "C" fn fmi2SetupExperiment(
     c: fmi2Component,
-    toleranceDefined: fmi2Boolean,
-    tolerance: fmi2Real,
+    _toleranceDefined: fmi2Boolean,
+    _tolerance: fmi2Real,
     startTime: fmi2Real,
     stopTimeDefined: fmi2Boolean,
     stopTime: fmi2Real,
@@ -353,28 +353,28 @@ pub extern "C" fn fmi2GetReal(
 
 #[no_mangle]
 pub extern "C" fn fmi2GetInteger(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *mut fmi2Integer,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *mut fmi2Integer,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetBoolean(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *mut fmi2Boolean,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *mut fmi2Boolean,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetString(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *mut fmi2String,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *mut fmi2String,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
@@ -436,175 +436,175 @@ pub extern "C" fn fmi2SetReal(
 
 #[no_mangle]
 pub extern "C" fn fmi2SetInteger(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *const fmi2Integer,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *const fmi2Integer,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SetBoolean(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *const fmi2Boolean,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *const fmi2Boolean,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SetString(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    value: *const fmi2String,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _value: *const fmi2String,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2GetFMUstate(c: fmi2Component, FMUstate: *mut fmi2FMUstate) -> fmi2Status {
+pub extern "C" fn fmi2GetFMUstate(_c: fmi2Component, _FMUstate: *mut fmi2FMUstate) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2SetFMUstate(c: fmi2Component, FMUstate: fmi2FMUstate) -> fmi2Status {
+pub extern "C" fn fmi2SetFMUstate(_c: fmi2Component, _FMUstate: fmi2FMUstate) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2FreeFMUstate(c: fmi2Component, FMUstate: *mut fmi2FMUstate) -> fmi2Status {
+pub extern "C" fn fmi2FreeFMUstate(_c: fmi2Component, _FMUstate: *mut fmi2FMUstate) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SerializedFMUstateSize(
-    c: fmi2Component,
-    FMUstate: fmi2FMUstate,
-    size: *mut usize,
+    _c: fmi2Component,
+    _FMUstate: fmi2FMUstate,
+    _size: *mut usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SerializeFMUstate(
-    c: fmi2Component,
-    FMUstate: fmi2FMUstate,
-    serializedState: *mut fmi2Byte,
-    size: usize,
+    _c: fmi2Component,
+    _FMUstate: fmi2FMUstate,
+    _serializedState: *mut fmi2Byte,
+    _size: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2DeSerializeFMUstate(
-    c: fmi2Component,
-    serializedState: *const fmi2Byte,
-    size: usize,
-    FMUstate: *mut fmi2FMUstate,
+    _c: fmi2Component,
+    _serializedState: *const fmi2Byte,
+    _size: usize,
+    _FMUstate: *mut fmi2FMUstate,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetDirectionalDerivative(
-    c: fmi2Component,
-    vUnknown_ref: *const fmi2ValueReference,
-    nUnknown: usize,
-    vKnown_ref: *const fmi2ValueReference,
-    nKnown: usize,
-    dvKnown: *const fmi2Real,
-    dvUnknown: *mut fmi2Real,
+    _c: fmi2Component,
+    _vUnknown_ref: *const fmi2ValueReference,
+    _nUnknown: usize,
+    _vKnown_ref: *const fmi2ValueReference,
+    _nKnown: usize,
+    _dvKnown: *const fmi2Real,
+    _dvUnknown: *mut fmi2Real,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2EnterEventMode(c: fmi2Component) -> fmi2Status {
+pub extern "C" fn fmi2EnterEventMode(_c: fmi2Component) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2NewDiscreteStates(
-    c: fmi2Component,
-    fmi2eventInfo: *mut fmi2EventInfo,
+    _c: fmi2Component,
+    _fmi2eventInfo: *mut fmi2EventInfo,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2EnterContinuousTimeMode(c: fmi2Component) -> fmi2Status {
+pub extern "C" fn fmi2EnterContinuousTimeMode(_c: fmi2Component) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2CompletedIntegratorStep(
-    c: fmi2Component,
-    noSetFMUStatePriorToCurrentPoint: fmi2Boolean,
-    enterEventMode: *mut fmi2Boolean,
-    terminateSimulation: *mut fmi2Boolean,
+    _c: fmi2Component,
+    _noSetFMUStatePriorToCurrentPoint: fmi2Boolean,
+    _enterEventMode: *mut fmi2Boolean,
+    _terminateSimulation: *mut fmi2Boolean,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
-pub extern "C" fn fmi2SetTime(c: fmi2Component, time: fmi2Real) -> fmi2Status {
+pub extern "C" fn fmi2SetTime(_c: fmi2Component, _time: fmi2Real) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SetContinuousStates(
-    c: fmi2Component,
-    x: *const fmi2Real,
-    nx: usize,
+    _c: fmi2Component,
+    _x: *const fmi2Real,
+    _nx: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetDerivatives(
-    c: fmi2Component,
-    derivatives: *mut fmi2Real,
-    nx: usize,
+    _c: fmi2Component,
+    _derivatives: *mut fmi2Real,
+    _nx: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetEventIndicators(
-    c: fmi2Component,
-    eventIndicators: *mut fmi2Real,
-    ni: usize,
+    _c: fmi2Component,
+    _eventIndicators: *mut fmi2Real,
+    _ni: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetContinuousStates(
-    c: fmi2Component,
-    x: *mut fmi2Real,
-    nx: usize,
+    _c: fmi2Component,
+    _x: *mut fmi2Real,
+    _nx: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetNominalsOfContinuousStates(
-    c: fmi2Component,
-    x_nominal: *mut fmi2Real,
-    nx: usize,
+    _c: fmi2Component,
+    _x_nominal: *mut fmi2Real,
+    _nx: usize,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2SetRealInputDerivatives(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    order: *const fmi2Integer,
-    value: *const fmi2Real,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _order: *const fmi2Integer,
+    _value: *const fmi2Real,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2GetRealOutputDerivatives(
-    c: fmi2Component,
-    vr: *const fmi2ValueReference,
-    nvr: usize,
-    order: *const fmi2Integer,
-    value: *mut fmi2Real,
+    _c: fmi2Component,
+    _vr: *const fmi2ValueReference,
+    _nvr: usize,
+    _order: *const fmi2Integer,
+    _value: *mut fmi2Real,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 #[no_mangle]
 pub extern "C" fn fmi2DoStep(
     c: fmi2Component,
-    currentCommunicationPoint: fmi2Real,
+    _currentCommunicationPoint: fmi2Real,
     communicationStepSize: fmi2Real,
-    noSetFMUStatePriorToCurrentPoint: fmi2Boolean,
+    _noSetFMUStatePriorToCurrentPoint: fmi2Boolean,
 ) -> fmi2Status {
     assert!(
         std::ptr::null() != c as *mut c_void,
@@ -621,51 +621,51 @@ pub extern "C" fn fmi2DoStep(
 }
 
 #[no_mangle]
-pub extern "C" fn fmi2CancelStep(c: fmi2Component) -> fmi2Status {
+pub extern "C" fn fmi2CancelStep(_c: fmi2Component) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2GetStatus(
-    c: fmi2Component,
-    s: fmi2StatusKind,
-    value: *mut fmi2Status,
+    _c: fmi2Component,
+    _s: fmi2StatusKind,
+    _value: *mut fmi2Status,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2GetRealStatus(
-    c: fmi2Component,
-    s: fmi2StatusKind,
-    value: *mut fmi2Real,
+    _c: fmi2Component,
+    _s: fmi2StatusKind,
+    _value: *mut fmi2Real,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2GetIntegerStatus(
-    c: fmi2Component,
-    s: fmi2StatusKind,
-    value: *mut fmi2Integer,
+    _c: fmi2Component,
+    _s: fmi2StatusKind,
+    _value: *mut fmi2Integer,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2GetBooleanStatus(
-    c: fmi2Component,
-    s: fmi2StatusKind,
-    value: *mut fmi2Boolean,
+    _c: fmi2Component,
+    _s: fmi2StatusKind,
+    _value: *mut fmi2Boolean,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
 
 #[no_mangle]
 pub extern "C" fn fmi2GetStringStatus(
-    c: fmi2Component,
-    s: fmi2StatusKind,
-    value: *mut fmi2String,
+    _c: fmi2Component,
+    _s: fmi2StatusKind,
+    _value: *mut fmi2String,
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
