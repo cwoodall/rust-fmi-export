@@ -3,7 +3,7 @@
 <fmiModelDescription
   fmiVersion               = "2.0"
   modelName                = "Sine"
-  guid                     = "{3b19c65e-77df-e618-7830-cea1a931191a}"
+  guid                     = "{21d9f232-b090-4c79-933f-33da939b5934}"
   description              = "Model Sine Wave"
   variableNamingConvention = "structured"
   numberOfEventIndicators  = "0">

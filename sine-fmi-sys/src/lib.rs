@@ -1,16 +1,20 @@
 use fmi2_sys::*;
-use std::ffi::{CString};
+use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_void};
 
 extern crate num;
 #[macro_use]
 extern crate num_derive;
 
-const VERSION: &str = "1.0";
-const GUID: &str = "{21d9f232-b090-4c79-933f-33da939b5934}";
+pub const VERSION: &str = "2.0";
+pub const GUID: &str = "{21d9f232-b090-4c79-933f-33da939b5934}";
 
 const FMI2TRUE: fmi2Boolean = fmi2True as fmi2Boolean;
 const FMI2FALSE: fmi2Boolean = fmi2False as fmi2Boolean;
+
+pub mod test {
+    pub const VERSION: &str = "1.0";
+}
 
 #[repr(C)]
 #[derive(Debug)]
@@ -86,6 +90,7 @@ pub extern "C" fn fmi2SetDebugLogging(
         "fmi2FreeInstance: Null pointer passed"
     );
 
+    
     let x: &mut ModelInstance = unsafe { &mut *(c as *mut ModelInstance) };
 
     // https://stackoverflow.com/questions/26117197/create-interface-to-c-function-pointers-in-rust
@@ -131,6 +136,21 @@ pub extern "C" fn fmi2Instantiate(
     _visible: fmi2Boolean,
     loggingOn: fmi2Boolean,
 ) -> *mut ModelInstance {
+    assert!(
+        std::ptr::null() != instanceName as *mut c_void,
+        "fmi2Instantiate: Null pointer passed"
+    );
+
+    assert!(
+        std::ptr::null() != fmuGUID as *mut c_void,
+        "fmi2Instantiate: Null pointer passed"
+    );
+
+    let guid = unsafe { CStr::from_ptr(fmuGUID as *mut c_char) };
+
+    println!("fmi2Instantiate: GUID = {}", guid.to_str().unwrap());
+    assert!(guid.to_str().unwrap() == GUID, "fmi2Instantiate: Invalid GUID");
+
     let mut x: Box<ModelInstance> = Box::new(ModelInstance {
         instanceName: instanceName,
         GUID: fmuGUID,
@@ -669,3 +689,4 @@ pub extern "C" fn fmi2GetStringStatus(
 ) -> fmi2Status {
     fmi2Status_fmi2Error
 }
+

@@ -1,5 +1,5 @@
 [package]
-name = "sine-fmi-sys"
+name = "sine_fmi"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,10 +12,12 @@ crate-type=["cdylib"]
 rustflags = [
     "-Clink-arg=-undefined","-Clink-arg=dynamic_lookup", # allow undefined symbols
     "-Clink-args=-rdynamic" # export symbols in an executable
-
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dev-dependencies]
+cargo-create-fmu = { path = "../cargo-create-fmu"}
 
 [dependencies]
 fmi2-sys = { path = "../fmi2-sys" }
