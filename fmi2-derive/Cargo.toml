@@ -11,8 +11,16 @@ proc-macro = true
 
 [dependencies]
 syn = { version = "*", features = ["extra-traits"] }
-proc-macro2 = "1.0.60"
-r3bl_rs_utils = "*"
+proc-macro2 = "*"
+#r3bl_rs_utils = "*"
 darling = "0.20.1"
 quote = "1.0.28"
-quick-xml = "0.29.0"
+quick-xml = '0.29.0'
+
+[dependencies.uuid]
+version = "1.3.4"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]

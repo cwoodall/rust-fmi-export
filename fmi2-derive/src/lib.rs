@@ -11,6 +11,7 @@ use darling::{
     ast::{self},
     FromDeriveInput, FromField, FromMeta, ToTokens,
 };
+
 use proc_macro2::{self, TokenStream};
 use quote::quote;
 use syn::parse_macro_input;
@@ -26,6 +27,7 @@ enum Causality {
     Parameter,
     Independent,
 }
+
 impl ToString for Causality {
     fn to_string(&self) -> String {
         match self {
@@ -49,11 +51,21 @@ struct Description(String);
 
 #[derive(Debug, Clone, FromMeta)]
 #[darling(default)]
+struct GUID(String);
+
+#[derive(Debug, Clone, FromMeta)]
+#[darling(default)]
 struct Unit(String);
 
 impl Default for Causality {
     fn default() -> Self {
         Causality::Ignore
+    }
+}
+
+impl Default for GUID {
+    fn default() -> Self {
+        GUID(format!("{{{}}}", uuid::Uuid::new_v4().to_string()))
     }
 }
 
@@ -79,9 +91,9 @@ impl Default for Unit {
 /// composable; each darling-dependent crate should have its own struct to handle
 /// when its trait is derived.
 #[derive(Debug, FromDeriveInput)]
-// This line says that we want to process all attributes declared with `my_trait`,
+// This line says that we want to process all attributes declared with `fmi_model_struct`,
 // and that darling should panic if this receiver is given an enum.
-#[darling(attributes(fmi_model_struct), supports(struct_any))]
+#[darling(attributes(fmi_model))]
 struct FmiModelStructReceiver {
     /// The struct ident.
     ident: syn::Ident,
@@ -93,6 +105,12 @@ struct FmiModelStructReceiver {
     /// Receives the body of the struct or enum. We don't care about
     /// struct fields because we previously told darling we only accept structs.
     data: ast::Data<(), FmiVariableReceiver>,
+
+    #[darling(default)]
+    description: Description,
+
+    #[darling(default)]
+    guid: GUID,
 }
 
 #[derive(Debug, FromField)]
@@ -126,7 +144,7 @@ impl ToTokens for FmiModelStructReceiver {
     fn to_tokens(&self, tokens: &mut TokenStream) {}
 }
 
-#[proc_macro_derive(FmiModelStructDerive, attributes(fmi_model_struct, fmi_variable))]
+#[proc_macro_derive(FmiModelStructDerive, attributes(fmi_model, fmi_variable))]
 pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(input);
     let fmi_model = FmiModelStructReceiver::from_derive_input(&input).expect("Wrong options");
@@ -233,10 +251,12 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // copy existing attributes, adds a new my-key="some value" attribute
     fmi_model_description.push_attribute(("fmiVersion", "2.0"));
     fmi_model_description.push_attribute(("modelName", model_name.to_string().as_str()));
-    fmi_model_description.push_attribute(("guid", "{21d9f232-b090-4c79-933f-33da939b5934}"));
-    fmi_model_description.push_attribute(("description", model_name.to_string().as_str()));
+    fmi_model_description.push_attribute(("guid", fmi_model.guid.0.as_str()));
+    fmi_model_description.push_attribute(("description", fmi_model.description.0.as_str()));
     // writes the event to the writer
     writer.write_event(Event::Start(fmi_model_description));
+
+    writer.write_indent();
 
     // TODO(cw): Add all the required elements, and make them configurable using attributes
     let mut cosimulation_elements = BytesStart::new("CoSimulation");
@@ -268,7 +288,7 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     });
 
     writer.write_event(Event::End(BytesEnd::new("UnitDefinitions")));
-
+    writer.write_indent();
 
     // Add default experiment, but don't make it configurable
     // TODO(cw): Make this configurable through an attribute
@@ -279,20 +299,12 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     default_experiment.push_attribute(("stepSize", "0.1"));
     writer.write_event(Event::Empty(default_experiment));
 
+    writer.write_indent();
 
     // Populate Model Variables
     writer.write_event(Event::Start(BytesStart::new("ModelVariables")));
 
-    // Add all variables
-    // Start with Scalar Variables
-
-    // Add all real variables
-    let real_fields: Vec<&&mut FmiVariableReceiver> = fields
-        .iter()
-        .filter(|x| x.ty == syn::parse_str::<syn::Type>("f64").unwrap())
-        .collect::<Vec<_>>();
-
-    for field in real_fields.iter() {
+    for field in fields.iter() {
         let mut event = BytesStart::new("ScalarVariable");
         event.push_attribute(("name", field.ident.as_ref().unwrap().to_string().as_str()));
         event.push_attribute(("valueReference", field.id.unwrap().0.to_string().as_str()));
@@ -303,84 +315,49 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         } else {
             event.push_attribute(("variability", "continuous"));
         }
-
         writer.write_event(Event::Start(event));
-        
-        let mut event = BytesStart::new("Real");
+
+        let type_string = match &field.ty {
+            syn::Type::Path(t) => {
+                if t.path.is_ident("f64") {
+                    "Real"
+                } else if t.path.is_ident("i64") {
+                    "Integer"
+                } else if t.path.is_ident("bool") {
+                    "Boolean"
+                } else {
+                    panic!("Unsupported type");
+                    ""
+                }
+            }
+            _ => {
+                panic!("Unsupported type");
+                ""
+            }
+        };
+
+        let mut event = BytesStart::new(type_string);
+
         event.push_attribute(("unit", field.unit.0.as_str()));
-    
         writer.write_event(Event::Empty(event));
         writer.write_event(Event::End(BytesEnd::new("ScalarVariable")));
-    }
-
-    let integer_fields: Vec<&&mut FmiVariableReceiver> = fields
-        .iter()
-        .filter(|x| x.ty == syn::parse_str::<syn::Type>("i64").unwrap())
-        .collect::<Vec<_>>();
-
-
-    for field in integer_fields.iter() {
-        let mut event = BytesStart::new("ScalarVariable");
-        event.push_attribute(("name", field.ident.as_ref().unwrap().to_string().as_str()));
-        event.push_attribute(("valueReference", field.id.unwrap().0.to_string().as_str()));
-        event.push_attribute(("description", field.description.0.as_str()));
-        event.push_attribute(("causality", field.causality.to_string().as_str()));
-        if (field.causality == Causality::Parameter) {
-            event.push_attribute(("variability", "fixed"));
-        } else {
-            event.push_attribute(("variability", "continuous"));
-        }
-
-        writer.write_event(Event::Start(event));
-        
-        let mut event = BytesStart::new("Integer");
-        event.push_attribute(("unit", field.unit.0.as_str()));
-    
-        writer.write_event(Event::Empty(event));
-        writer.write_event(Event::End(BytesEnd::new("ScalarVariable")));
-    }
-
-    let bool_fields: Vec<&&mut FmiVariableReceiver> = fields
-        .iter()
-        .filter(|x| x.ty == syn::parse_str::<syn::Type>("bool").unwrap())
-        .collect::<Vec<_>>();
-
-
-    for field in bool_fields.iter() {
-        let mut event = BytesStart::new("ScalarVariable");
-        event.push_attribute(("name", field.ident.as_ref().unwrap().to_string().as_str()));
-        event.push_attribute(("valueReference", field.id.unwrap().0.to_string().as_str()));
-        event.push_attribute(("description", field.description.0.as_str()));
-        event.push_attribute(("causality", field.causality.to_string().as_str()));
-        if (field.causality == Causality::Parameter) {
-            event.push_attribute(("variability", "fixed"));
-        } else {
-            event.push_attribute(("variability", "continuous"));
-        }
-
-        writer.write_event(Event::Start(event));
-        
-        let mut event = BytesStart::new("Integer");
-        event.push_attribute(("unit", field.unit.0.as_str()));
-    
-        writer.write_event(Event::Empty(event));
-        writer.write_event(Event::End(BytesEnd::new("ScalarVariable")));
+        writer.write_indent();
     }
 
     // TODO(cw): Support non scalar variables
     writer.write_event(Event::End(BytesEnd::new("ModelVariables")));
-    
+
     writer.write_event(Event::Start(BytesStart::new("ModelStructure")));
 
     writer.write_event(Event::Start(BytesStart::new("Outputs")));
 
     for (index, field) in fields.iter().enumerate() {
-        if field.causality ==Causality::Output {
+        if field.causality == Causality::Output {
             let mut event = BytesStart::new("Unknown");
             event.push_attribute(("index", (index + 1).to_string().as_str()));
             event.push_attribute(("dependencies", ""));
-            writer.write_event(Event::Empty(event));    
-        }        
+            writer.write_event(Event::Empty(event));
+        }
     }
 
     writer.write_event(Event::End(BytesEnd::new("Outputs")));
@@ -394,6 +371,9 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let val = String::from_utf8(result).expect("Found invalid UTF-8");
 
     // Create the output code
+    let guid = fmi_model.guid.0;
+    let description = fmi_model.description.0;
+    let model_name_str = model_name.to_string();
     let output = quote! {
         // Create the value reference enum
         #[derive(Copy, Clone)]
@@ -467,8 +447,20 @@ pub fn derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
                 }
             }
 
-            fn to_model_description_xml() -> String {
-                #val.to_string()
+            fn to_model_description_xml() -> &'static str {
+                #val
+            }
+
+            fn guid() -> &'static str {
+                #guid
+            }
+
+            fn description() -> &'static str {
+                #description
+            }
+
+            fn model_name() -> &'static str {
+                #model_name_str
             }
         }
     };
