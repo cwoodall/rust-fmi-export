@@ -9,30 +9,36 @@ extern crate num;
 extern crate num_derive;
 
 #[macro_use]
-extern crate fmi2_derive;
-use fmi2_derive::*;
+extern crate fmi2;
 
-#[derive(Debug)]
-pub enum FMIErrors { InvalidValueReference, Error }
-
-pub trait FmiModelStructDerive {
-    fn get_real_by_value_reference(self: &Self, value_reference: u64) -> Option<f64>;
-    fn get_bool_by_value_reference(self: &Self, value_reference: u64) -> Option<bool>;
-    fn get_integer_by_value_reference(self: &Self, value_reference: u64) -> Option<i64>;
-    fn set_real_by_value_reference(self: &mut Self, value_reference: u64, value: f64) -> Result<(),FMIErrors> ;
-    fn set_integer_by_value_reference(self: &mut Self, value_reference: u64, value: i64) -> Result<(),FMIErrors> ;
-    fn set_bool_by_value_reference(self: &mut Self, value_reference: u64, value: bool) -> Result<(),FMIErrors> ;
-    fn to_model_description_xml() -> &'static str;
-    fn guid() -> &'static str;
-    fn description() -> &'static str;
-    fn model_name() -> &'static str;
-}
+use fmi2::derive::*;
+use fmi2::{FmiModelStructDerive, FMIErrors};
 
 pub const VERSION: &str = "2.0";
 pub const GUID: &str = "{21d9f232-b090-4c79-933f-33da939b5934}";
 
 const FMI2TRUE: fmi2Boolean = fmi2True as fmi2Boolean;
 const FMI2FALSE: fmi2Boolean = fmi2False as fmi2Boolean;
+
+#[repr(C)]
+#[derive(FmiModelStructDerive)]
+#[fmi_model(
+    description = "How is it going?",
+    guid = "{21d9f232-b090-4c79-933f-33da939b5934}"
+)]
+pub struct Foo {
+    #[fmi_variable(id = 0, causality = "output", description = "bar", unit = "s")]
+    bar: f64,
+
+    #[fmi_variable(causality = "output", description = "bar", unit = "s")]
+    wow: bool,
+
+    #[fmi_variable(causality = "parameter", description = "bar", unit = "V")]
+    lol: i64,
+
+    // Unmarked variables will be ignored
+    hello: f64,
+}
 
 #[repr(C)]
 #[derive(Debug)]

@@ -1,0 +1,31 @@
+[package]
+name = "sine_derive_fmi"
+version = "0.1.0"
+edition = "2021"
+
+# https://doc.rust-lang.org/reference/linkage.html
+#https://www.reddit.com/r/rust/comments/abefuy/how_to_create_a_dynamic_rust_library_and_link_to/
+[lib]
+crate-type=["cdylib"]
+
+[build]
+rustflags = [
+    "-Clink-arg=-undefined","-Clink-arg=dynamic_lookup", # allow undefined symbols
+    "-Clink-args=-rdynamic" # export symbols in an executable
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dev-dependencies]
+cargo-create-fmu = { path = "../cargo-create-fmu"}
+
+[dependencies]
+fmi2-sys = { path = "../fmi2-sys" }
+num = "0.4"
+num-derive = "0.3"
+num-traits = "0.2"
+fmi2 = { path = "../fmi2" }
+fmi2-derive = { path = "../fmi2/fmi2-derive" }
+serde = {version = "1.0.164", features = ["derive"]}
+handlebars = "4.3.7"
+serde_json = "1.0.99"
